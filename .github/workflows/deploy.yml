@@ -68,10 +68,15 @@ jobs:
             pip install --upgrade pip
             pip install -r requirements.txt
 
-            # Install systemd service on first deploy
+            # Deploy systemd user service
+            mkdir -p ~/.config/systemd/user
+            cp "$APP_DIR/deployment-demo.service" ~/.config/systemd/user/
             systemctl --user daemon-reload
-            systemctl --user enable --now deployment-demo || true
-            systemctl --user restart deployment-demo || true
+            systemctl --user enable --now deployment-demo || systemctl --user start deployment-demo
+            sleep 2
+
+            # Verify
+            curl -sf http://localhost:8100/health && echo "Health check OK" || echo "Health check not yet responding"
 
       - name: Verify
         uses: appleboy/ssh-action@v1.0.3
