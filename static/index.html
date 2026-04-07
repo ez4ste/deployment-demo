@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deployment Demo</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+<style>
+:root {
+  --bg-primary: #0f1117;
+  --bg-card: #161b22;
+  --bg-card-hover: #1c2333;
+  --border: #21262d;
+  --text-primary: #e6edf3;
+  --text-secondary: #7d8590;
+  --accent: #58a6ff;
+  --accent-glow: rgba(88, 166, 255, 0.15);
+  --green: #3fb950;
+  --green-glow: rgba(63, 185, 80, 0.2);
+  --radius: 16px;
+  --radius-sm: 8px;
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", Monaco, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", Roboto, sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);background:var(--bg-primary);color:var(--text-primary);min-height:100vh;padding:2rem 1rem;transition:background var(--transition)}
+.container{max-width:640px;margin:0 auto}
+.header{text-align:center;margin-bottom:3rem;animation:fadeDown .6s ease}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.logo{font-size:3rem;margin-bottom:.75rem;display:block;animation:bounce 2s ease infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+h1{font-size:1.75rem;font-weight:700;letter-spacing:-.02em;margin-bottom:.25rem}
+.subtitle{color:var(--text-secondary);font-size:.95rem}
+.status-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;animation:fadeUp .6s ease .1s both;transition:all var(--transition)}
+.status-card:hover{background:var(--bg-card-hover);border-color:rgba(88,166,255,.3);box-shadow:0 0 30px var(--accent-glow)}
+.status-card.loading:hover{border-color:rgba(139,148,158,.3);box-shadow:none}
+.status-badge{display:inline-flex;align-items:center;gap:.5rem;font-size:.85rem;font-weight:600;padding:.35rem .85rem;border-radius:999px;background:var(--green-glow);color:var(--green);margin-bottom:1rem}
+.status-badge.offline{background:rgba(139,148,158,.15);color:#8b949e}
+.status-badge .dot{width:8px;height:8px;border-radius:50%;background:currentColor;position:;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.service-title{font-size:1.25rem;font-weight:600;margin-bottom:.5rem}
+.meta-grid{display:grid;gap:.75rem;animation:fadeUp .6s ease .2s both}
+.meta-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:1rem;transition:all var(--transition)}
+.meta-card:hover{border-color:currentColor;box-shadow:0 0 20px var(--accent-glow)}
+.meta-label{font-size:.75rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.03em;margin-bottom:.25rem}
+.meta-value{font-family:var(--font-mono);font-size:.95rem;color:var(--text-primary)}
+.meta-grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.75rem;margin-top:.75rem}
+.actions{margin-top:1.5rem;animation:fadeUp .6s ease .3s both;display:flex;gap:.75rem}
+.btn{flex:1;padding:.75rem 1.5rem;border:none;border-radius:var(--radius-sm);font-weight:600;font-size:.85rem;cursor:pointer;transition:all var(--transition);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:.5rem}
+.btn{background:var(--accent);color:#fff}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-secondary{background:var(--bg-card);color:var(--text-primary);border:1px solid var(--border)}
+.btn-secondary:hover{background:var(--bg-card-hover);border-color:rgba(88,166,255,.3)}
+.timestamp{text-align:center;margin-top:2rem;font-size:.8rem;color:var(--text-secondary);animation:fadeUp .6s ease .4s both}
+.timestamp .pulse{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:.5rem;animation:pulse 2s ease infinite}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <span class="logo">🚀</span>
+    <h1>Deployment Demo</h1>
+    <p class="subtitle">Agent-driven CI/CD pipeline — FastAPI on Hetzner</p>
+  </div>
+
+  <div class="status-card loading" id="status-card">
+    <div class="status-badge offline" id="status-badge"><span class="dot"></span>Connecting...</div>
+    <div class="service-title" id="service-name">Loading...</div>
+    <div class="meta-grid-2">
+      <div class="meta-card"><div class="meta-label">Version</div><div class="meta-value" id="version">—</div></div>
+      <div class="meta-card"><div class="meta-label">Hostname</div><div class="meta-value" id="hostname">—</div></div>
+      <div class="meta-card"><div class="meta-label">Uptime</div><div class="meta-value" id="uptime">—</div></div>
+      <div class="meta-card"><div class="meta-label">Last Check</div><div class="meta-value" id="last-check">—</div></div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <a class="btn" href="/docs" target="_blank">API Docs</a>
+    <button class="btn btn-secondary" onclick="fetchHealth()">Refresh</button>
+  </div>
+
+  <div class="timestamp">
+    <span class="pulse"></span>Auto-refreshes every 10s
+  </div>
+</div>
+
+<script>
+async function fetchHealth(){
+  try{
+    const r=await fetch('/health');
+    if(!r.ok)throw new Error('Service unavailable');
+    const d=await r.json();
+    const c=document.getElementById('status-card');
+    const b=document.getElementById('status-badge');
+    c.classList.remove('loading');
+    // Check health from the JSON response, not DOM state
+    const isHealthy = d.status === 'healthy';
+    if(isHealthy){
+      b.className='status-badge';
+      b.innerHTML='<span class="dot"></span>Healthy';
+    } else {
+      b.className='status-badge offline';
+      b.innerHTML='<span class="dot"></span>Degraded';
+    }
+    document.getElementById('service-name').textContent=d.service||'Unknown';
+    document.getElementById('version').textContent=d.version||'—';
+    document.getElementById('hostname').textContent=d.hostname||'—';
+    document.getElementById('uptime').textContent=new Date(d.timestamp).toLocaleTimeString();
+    document.getElementById('last-check').textContent=new Date().toLocaleTimeString();
+  }catch(e){
+    const c=document.getElementById('status-card');
+    const b=document.getElementById('status-badge');
+    c.classList.add('loading');
+    b.className='status-badge offline';
+    b.innerHTML='<span class="dot"></span>Offline';
+    document.getElementById('version').textContent='—';
+    document.getElementById('hostname').textContent='—';
+    document.getElementById('uptime').textContent='—';
+    document.getElementById('last-check').textContent=new Date().toLocaleTimeString();
+  }
+}
+fetchHealth();
+setInterval(fetchHealth,10000);
+</script>
+</body>
+</html>

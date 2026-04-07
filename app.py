@@ -1,13 +1,14 @@
-#!/usr/bin/env python3
 """Deployment Demo — FastAPI health-check service."""
 
 import os
 from datetime import datetime, timezone
 
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse, FileResponse
 from pydantic import BaseModel
 
 app = FastAPI(title="deployment-demo")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class HealthResponse(BaseModel):
@@ -40,3 +41,9 @@ def root():
         "docs": "/docs",
         "health": "/health",
     }
+
+
+@app.get("/ui", response_class=HTMLResponse)
+def ui():
+    """Serve the dashboard UI."""
+    return FileResponse(os.path.join(BASE_DIR, "static", "index.html"))
