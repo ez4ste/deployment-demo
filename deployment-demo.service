@@ -1,0 +1,16 @@
+[Unit]
+Description=Deployment Demo — FastAPI Health Check Service
+After=network-online.target
+
+[Service]
+Type=simple
+User=deploy
+WorkingDirectory=/home/deploy/apps/deployment-demo
+Environment=PATH=/home/deploy/apps/deployment-demo/venv/bin
+Environment=APP_VERSION=0.1.0
+ExecStart=/home/deploy/apps/deployment-demo/venv/bin/uvicorn app:app --host 0.0.0.0 --port 8100
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
