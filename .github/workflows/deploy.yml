@@ -72,7 +72,8 @@ jobs:
             mkdir -p ~/.config/systemd/user
             cp "$APP_DIR/deployment-demo.service" ~/.config/systemd/user/
             systemctl --user daemon-reload
-            systemctl --user enable --now deployment-demo || systemctl --user start deployment-demo
+            systemctl --user enable deployment-demo
+            systemctl --user restart deployment-demo
             sleep 2
 
             # Verify
